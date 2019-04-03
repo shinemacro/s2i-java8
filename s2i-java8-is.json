@@ -1,0 +1,25 @@
+{
+   "kind": "ImageStream",
+   "apiVersion": "v1",
+   "metadata": {
+      "name": "s2i-java8"
+   },
+   "spec": {
+      "tags": [
+         {
+            "name": "latest",
+            "annotations": {
+               "description": "Java8 S2I image",
+               "iconClass": "icon-jboss",
+               "tags": "java,maven",
+               "supports": "java:8",
+               "version": "latest"
+            },
+            "from": {
+               "kind": "DockerImage",
+               "name": "docker.io/zhaoyaohong/s2i-java8:latest"
+            }
+         }
+      ]
+   }
+}

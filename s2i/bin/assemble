@@ -1,0 +1,101 @@
+#!/bin/bash -e
+#
+# S2I assemble script for the 's2i-java8' image.
+# The 'assemble' script builds your application source so that it is ready to run.
+#
+# For more information refer to the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+echo "---> s2i assemble start..."
+
+# If the 's2i-java8' assemble script is executed with the '-h' flag, print the usage.
+if [[ "$1" == "-h" ]]; then
+	exec /usr/libexec/s2i/usage
+fi
+
+# Restore artifacts from the previous build (if they exist).
+#
+if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
+  echo "---> Restoring build artifacts..."
+  mv /tmp/artifacts/. ./
+fi
+
+echo "---> Installing application source..."
+#cp -Rf /tmp/src/. ./
+WORK_DIR=$PWD
+echo "work dir: $PWD"
+if [ ! -z ${GIT_URI} ] ; then
+  echo "Fetching source from git repository ${GIT_URI}"
+  git clone ${GIT_URI}
+  echo "Finished fetching source from git repository."
+  export SRC_DIR=`basename $GIT_URI`
+  cd $WORK_DIR/$SRC_DIR/
+elif [ ! -z ${SVN_URI} ] ; then
+  echo "Fetching source from Subversion repository ${SVN_URI}"
+  svn co ${SVN_URI} --username=${SVN_USERNAME} --password=${SVN_PASSWORD} --no-auth-cache
+  echo "Finished fetching source from Subversion repository."
+  export SRC_DIR=`basename $SVN_URI`
+  cd $WORK_DIR/$SRC_DIR/
+else
+  echo "GIT_URI and SVN_URI not set, exit.";
+  exit 1
+fi
+echo "src dir: $PWD"
+
+# Copying maven settings.xml files from project.
+if [ -f $WORK_DIR/$SRC_DIR/configuration/settings.xml ]; then
+  mv $WORK_DIR/$SRC_DIR/configuration/settings.xml $HOME/.m2
+  echo "Finished copying maven settings.xml files from project."
+fi
+  
+echo "Determining builder"
+# If a build.gradle is present, this is a normal build scenario so run gradle.
+if [ -f "build.gradle" ]; then
+  echo "Found build.gradle"
+  BUILDER=gradle
+  BUILD_ARGS=${GRADLE_ARGS:-${BUILD_ARGS:-"build"}}
+  ARTIFACT_DIR=${ARTIFACT_DIR:-build/libs}
+  if [ -f "gradlew" ]; then
+    echo "---> Building application with wrapper..."
+    BUILDER="./gradlew"
+  fi
+fi
+# If a pom.xml is present, this is a normal build scenario so run maven.
+if [ -f "pom.xml" ]; then
+  echo "Found pom.xml"
+  # the subdirectory within LOCAL_SOURCE_DIR from where we should copy build
+  # artifacts (*.war, *.jar)
+  BUILDER=mvn
+  BUILD_ARGS=${MAVEN_ARGS:-${BUILD_ARGS:-"install"}}
+  ARTIFACT_DIR=${ARTIFACT_DIR:-target}
+  if [ -f "mvnw" ]; then
+    echo "---> Building application with wrapper..."
+    BUILDER="./mvnw"
+  fi
+fi
+
+if [ -z "$BUILDER" ]; then
+  echo "---> Could not determine builder (gradle or maven), exit."
+  exit 1
+fi
+
+echo "---> Building application from source..."
+# TODO: Add build steps for your application, eg npm install, bundle install, pip install, etc.
+BUILD_ARGS=${BUILD_ARGS:-"install"}
+echo "--> # BUILDER = $BUILDER"
+echo "--> # BUILD_ARGS = $BUILD_ARGS"
+
+echo "---> Building application with..."
+echo "--------> $BUILDER $BUILD_ARGS"
+$BUILDER $BUILD_ARGS
+
+echo "---> Rename artifact $(find $ARTIFACT_DIR -name *.jar)"
+result_file=$(find $ARTIFACT_DIR -name *.jar)
+if [ -z "$result_file" ]; then
+  echo "---> Build file could not be found, exit."
+  exit 1
+fi
+mv $result_file app.jar
+
+echo "---> s2i assemble end."

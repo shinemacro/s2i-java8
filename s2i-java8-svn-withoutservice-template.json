@@ -1,0 +1,204 @@
+{
+    "kind": "Template",
+    "apiVersion": "v1",
+    "metadata": {
+        "annotations": {
+            "iconClass" : "icon-tomcat",
+            "description": "Application template withoutservice for Java8 deployment by SVN."
+        },
+        "name": "s2i-java8-svn-withoutservice"
+    },
+    "labels": {
+        "template": "s2i-java8-svn-withoutservice"
+    },
+    "parameters": [
+        {
+            "description": "The name for the application.",
+            "name": "APPLICATION_NAME",
+            "displayName":"Application Name",
+            "value": "",
+            "required": true
+        },
+        {
+            "description": "The version for the application",
+            "name": "APPLICATION_VERSION",
+            "displayName":"Application Version",
+            "value": "latest",
+            "required": true
+        },
+        {
+            "description": "The path for the application. The file name for tomcat webapps.",
+            "name": "APPLICATION_PATH",
+            "displayName":"Application Path",
+            "value": ""
+        },
+        {
+            "description": "Subversion source URI for application",
+            "name": "SVN_URI",
+            "displayName":"Subversion source URI",
+            "value": "",
+            "required": true
+        },
+        {
+            "description": "Subversion Username",
+            "name": "SVN_USERNAME",
+            "displayName":"Subversion Username",
+            "value": "",
+            "required": true
+        },
+        {
+            "description": "Subversion Password",
+            "name": "SVN_PASSWORD",
+            "displayName":"Subversion Password",
+            "value": "",
+            "required": true
+        }
+    ],
+    "objects": [
+        {
+            "kind": "BuildConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APPLICATION_NAME}-${APPLICATION_VERSION}",
+                "labels": {
+                    "app": "${APPLICATION_NAME}"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Source",
+                    "sourceStrategy": {
+                        "from": {
+                            "kind": "ImageStreamTag",
+                            "namespace": "openshift",
+                            "name": "s2i-java8:latest"
+                        },
+                        "env": [
+                                    {
+                                        "name": "APPLICATION_PATH",
+                                        "value": "${APPLICATION_PATH}"
+                                    },
+                                    {
+                                        "name": "SVN_URI",
+                                        "value": "${SVN_URI}"
+                                    },
+                                    {
+                                        "name": "SVN_USERNAME",
+                                        "value": "${SVN_USERNAME}"
+                                    },
+                                    {
+                                        "name": "SVN_PASSWORD",
+                                        "value": "${SVN_PASSWORD}"
+                                    }
+
+                       ]
+                    }
+                },
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "${APPLICATION_NAME}:${APPLICATION_VERSION}"
+                    }
+                },
+                "triggers": [
+                    {
+                        "type": "GitHub",
+                        "github": {
+                            "secret": "${GITHUB_TRIGGER_SECRET}"
+                        }
+                    },
+                    {
+                        "type": "Generic",
+                        "generic": {
+                            "secret": "${GENERIC_TRIGGER_SECRET}"
+                        }
+                    },
+                    {
+                        "type": "ImageChange",
+                        "imageChange": {}
+                    }
+                ]
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APPLICATION_NAME}-${APPLICATION_VERSION}",
+                "labels": {
+                    "app": "${APPLICATION_NAME}"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Recreate"
+                },
+                "triggers": [
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "${APPLICATION_NAME}"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "${APPLICATION_NAME}:${APPLICATION_VERSION}"
+                            }
+                        }
+                    }
+                ],
+                "replicas": 1,
+                "selector": {
+                    "deploymentConfig": "${APPLICATION_NAME}-${APPLICATION_VERSION}"
+                },
+                "template": {
+                    "metadata": {
+                        "name": "${APPLICATION_NAME}-${APPLICATION_VERSION}",
+                        "labels": {
+                            "svc": "${APPLICATION_NAME}",
+                            "deploymentConfig": "${APPLICATION_NAME}-${APPLICATION_VERSION}",
+                            "app": "${APPLICATION_NAME}"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "${APPLICATION_NAME}",
+                                "image": "${APPLICATION_NAME}",
+                                "imagePullPolicy": "Always",
+                                "readinessProbe": {
+                                    "exec": {
+                                        "command": [
+                                            "/bin/bash",
+                                            "-c",
+                                            "curl http://localhost:8080/${APPLICATION_PATH}/"
+                                        ]
+                                    }
+                                },
+                                "ports": [
+                                    {
+                                        "name": "http",
+                                        "containerPort": 8080,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "APPLICATION_PATH",
+                                        "value": "${APPLICATION_PATH}"
+                                    },
+                                    {
+                                        "name": "SVN_URI",
+                                        "value": "${SVN_URI}"
+                                    }
+
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+}
