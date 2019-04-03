@@ -4,6 +4,7 @@ This Source-to-Image Builder let's you create projects targetting Java OpenJDK 8
 Java8 app can built with:
 * maven
 * gradle
+
 NOTE: If a project has a pom.xml and a build.gradle, maven will take precedence
 
 Supported tags and respective `Dockerfile` links
