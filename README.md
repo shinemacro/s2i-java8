@@ -1,7 +1,6 @@
 OpenShift S2I Builder for Java8 Jar App
 ====
-This Source-to-Image Builder let's you create projects targetting Java OpenJDK 8.
-Java8 app can built with:
+This Source-to-Image Builder let's you create projects targetting Java OpenJDK 8 and built with:
 * maven
 * gradle
 
