@@ -82,6 +82,10 @@ Test in Openshift
   * APPLICATION_VERSION: A *version* for your web application, different version will create different bc, dc and pod.
   * APPLICATION_PATH(Optional): Specify the application build path, the tomcat webapps file name.
   * APPLICATION_HOSTNAME(Optional): A hostname for route
+  * GIT_URI: The Git repository URL containing your Java8 application source code.
+  * SVN_URI: The SVN repository URL containing your Java8 application source code.
+  * SVN_USERNAME: Specify the subversion username.
+  * SVN_PASSWORD: Specify the subversion user's password.
   
   Next, click on 'Create' application.  This will invoke the *S2I process* which will build your application, containerize your application (as explained above), push the newly built image into the integrated docker registry and finally deploy a Pod containing your application.
   
