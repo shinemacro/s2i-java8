@@ -11,7 +11,7 @@
             "annotations": {
                "description": "Java8 S2I image",
                "iconClass": "icon-jboss",
-               "tags": "java,maven",
+               "tags": "java,java8,maven,gradle",
                "supports": "java:8",
                "version": "latest"
             },
