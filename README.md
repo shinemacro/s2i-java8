@@ -45,7 +45,7 @@ To build a Java image:
   This image is also available on DockerHub. To download it run:
 
     ```
-    $ docker pull zhaoayohong/s2i-java8:latest
+    $ docker pull zhaoyaohong/s2i-java8:latest
     ```
 
 Test in Openshift
