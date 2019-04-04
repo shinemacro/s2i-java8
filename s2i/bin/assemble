@@ -29,7 +29,7 @@ if [ ! -z ${GIT_URI} ] ; then
   echo "Fetching source from git repository ${GIT_URI}"
   git clone ${GIT_URI}
   echo "Finished fetching source from git repository."
-  export SRC_DIR=`basename $GIT_URI`
+  export SRC_DIR=`basename $GIT_URI .git`
   cd $WORK_DIR/$SRC_DIR/
 elif [ ! -z ${SVN_URI} ] ; then
   echo "Fetching source from Subversion repository ${SVN_URI}"
