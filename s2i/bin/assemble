@@ -67,12 +67,12 @@ if [ -f "pom.xml" ]; then
   # the subdirectory within LOCAL_SOURCE_DIR from where we should copy build
   # artifacts (*.war, *.jar)
   BUILDER=mvn
-  BUILD_ARGS=${MAVEN_ARGS:-${BUILD_ARGS:-"install"}}
+  BUILD_ARGS=${MAVEN_ARGS:-${BUILD_ARGS:-"package -Dmaven.test.skip=true"}}
   ARTIFACT_DIR=${ARTIFACT_DIR:-target}
-  if [ -f "mvnw" ]; then
-    echo "---> Building application with wrapper..."
-    BUILDER="./mvnw"
-  fi
+#  if [ -f "mvnw" ]; then
+#    echo "---> Building application with wrapper..."
+#    BUILDER="./mvnw"
+#  fi
 fi
 
 if [ -z "$BUILDER" ]; then
