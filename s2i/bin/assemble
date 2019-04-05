@@ -23,8 +23,13 @@ fi
 
 echo "---> Installing application source..."
 #cp -Rf /tmp/src/. ./
-WORK_DIR=$PWD
-echo "work dir: $PWD"
+echo "home:$HOME"
+echo "pwd:$PWD"
+APP_DIR=/opt/app-root
+echo "app dir:$APP_DIR"
+WORK_DIR=/opt/app-root/src
+cd $WORK_DIR
+echo "work dir:$PWD"
 if [ ! -z ${GIT_URI} ] ; then
   echo "Fetching source from git repository ${GIT_URI}"
   git clone ${GIT_URI}
@@ -67,12 +72,12 @@ if [ -f "pom.xml" ]; then
   # the subdirectory within LOCAL_SOURCE_DIR from where we should copy build
   # artifacts (*.war, *.jar)
   BUILDER=mvn
-  BUILD_ARGS=${MAVEN_ARGS:-${BUILD_ARGS:-"install"}}
+  BUILD_ARGS=${MAVEN_ARGS:-${BUILD_ARGS:-"package -Dmaven.test.skip=true"}}
   ARTIFACT_DIR=${ARTIFACT_DIR:-target}
-  if [ -f "mvnw" ]; then
-    echo "---> Building application with wrapper..."
-    BUILDER="./mvnw"
-  fi
+#  if [ -f "mvnw" ]; then
+#    echo "---> Building application with wrapper..."
+#    BUILDER="./mvnw"
+#  fi
 fi
 
 if [ -z "$BUILDER" ]; then
@@ -96,6 +101,8 @@ if [ -z "$result_file" ]; then
   echo "---> Build file could not be found, exit."
   exit 1
 fi
-mv $result_file app.jar
+
+echo "---> mv $result_file $APP_DIR/app.jar"
+mv $result_file $APP_DIR/app.jar
 
 echo "---> s2i assemble end."
