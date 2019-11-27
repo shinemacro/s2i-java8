@@ -254,8 +254,22 @@
                                         "name": "SVN_URI",
                                         "value": "${SVN_URI}"
                                     }
-
+                                ],
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/opt/app-root/logs",
+                                        "name": "log-storage"
+                                    }
                                 ]
+                            }
+                        ],
+                        "volumes": [
+                            {
+                                "hostPath": {
+                                    "path": "/var/openshift-logs/applogs",
+                                    "type": "DirectoryOrCreate"
+                                },
+                                "name": "log-storage"
                             }
                         ]
                     }

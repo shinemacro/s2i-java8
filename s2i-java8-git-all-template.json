@@ -232,8 +232,22 @@
                                         "name": "GIT_URI",
                                         "value": "${GIT_URI}"
                                     }
-
+                                ],
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/opt/app-root/logs",
+                                        "name": "log-storage"
+                                    }
                                 ]
+                            }
+                        ],
+                        "volumes": [
+                            {
+                                "hostPath": {
+                                    "path": "/var/openshift-logs/applogs",
+                                    "type": "DirectoryOrCreate"
+                                },
+                                "name": "log-storage"
                             }
                         ]
                     }
