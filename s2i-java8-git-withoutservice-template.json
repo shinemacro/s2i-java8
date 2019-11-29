@@ -38,6 +38,18 @@
             "displayName":"Git source URI",
             "value": "",
             "required": true
+        },
+        {
+            "description": "Git source branch for application",
+            "name": "GIT_BRANCH",
+            "displayName":"Git source branch",
+            "value": ""
+        },
+        {
+            "description": "Git source tag for application",
+            "name": "GIT_TAG",
+            "displayName":"Git source tag",
+            "value": ""
         }
     ],
     "objects": [
@@ -67,8 +79,15 @@
                                     {
                                         "name": "GIT_URI",
                                         "value": "${GIT_URI}"
+                                    },
+                                    {
+                                        "name": "GIT_BRANCH",
+                                        "value": "${GIT_BRANCH}"
+                                    },
+                                    {
+                                        "name": "GIT_TAG",
+                                        "value": "${GIT_TAG}"
                                     }
-
                        ]
                     }
                 },
@@ -169,6 +188,14 @@
                                     {
                                         "name": "GIT_URI",
                                         "value": "${GIT_URI}"
+                                    },
+                                    {
+                                        "name": "GIT_BRANCH",
+                                        "value": "${GIT_BRANCH}"
+                                    },
+                                    {
+                                        "name": "GIT_TAG",
+                                        "value": "${GIT_TAG}"
                                     }
                                 ],
                                 "volumeMounts": [

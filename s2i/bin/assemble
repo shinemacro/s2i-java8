@@ -32,7 +32,16 @@ cd $WORK_DIR
 echo "work dir:$PWD"
 if [ ! -z ${GIT_URI} ] ; then
   echo "Fetching source from git repository ${GIT_URI}"
-  git clone ${GIT_URI}
+  if [ ! -z ${GIT_BRANCH} ] ; then
+  	echo "Fetching source from git branch ${GIT_BRANCH}"
+  	git clone -b ${GIT_BRANCH} ${GIT_URI}
+  else
+  	git clone ${GIT_URI}
+  fi
+  if [ ! -z ${GIT_TAG} ] ; then
+  	echo "Fetching source from git tag ${GIT_TAG}"
+  	git checkout -B package ${GIT_TAG}
+  fi
   echo "Finished fetching source from git repository."
   export SRC_DIR=`basename $GIT_URI .git`
   cd $WORK_DIR/$SRC_DIR/
