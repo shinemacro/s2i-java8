@@ -19,6 +19,20 @@
                "kind": "DockerImage",
                "name": "docker.io/zhaoyaohong/s2i-java8:latest"
             }
+         },
+         {
+            "name": "v2",
+            "annotations": {
+               "description": "Java8 S2I image",
+               "iconClass": "icon-jboss",
+               "tags": "java,java8,maven,gradle",
+               "supports": "java:8",
+               "version": "v2"
+            },
+            "from": {
+               "kind": "DockerImage",
+               "name": "docker.io/zhaoyaohong/s2i-java8:v2"
+            }
          }
       ]
    }
