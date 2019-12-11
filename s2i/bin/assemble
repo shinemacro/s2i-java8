@@ -38,13 +38,13 @@ if [ ! -z ${GIT_URI} ] ; then
   else
   	git clone ${GIT_URI}
   fi
-  if [ ! -z ${GIT_TAG} ] ; then
-  	echo "Fetching source from git tag ${GIT_TAG}"
-  	git checkout -B package ${GIT_TAG}
-  fi
   echo "Finished fetching source from git repository."
   export SRC_DIR=`basename $GIT_URI .git`
   cd $WORK_DIR/$SRC_DIR/
+  if [ ! -z ${GIT_TAG} ] ; then
+  	echo "git checkout -B package tag ${GIT_TAG}"
+  	git checkout -B package ${GIT_TAG}
+  fi
 elif [ ! -z ${SVN_URI} ] ; then
   echo "Fetching source from Subversion repository ${SVN_URI}"
   svn co ${SVN_URI} --username=${SVN_USERNAME} --password=${SVN_PASSWORD} --no-auth-cache
@@ -52,7 +52,7 @@ elif [ ! -z ${SVN_URI} ] ; then
   export SRC_DIR=`basename $SVN_URI`
   cd $WORK_DIR/$SRC_DIR/
 else
-  echo "GIT_URI and SVN_URI not set, exit.";
+  echo "GIT_URI and SVN_URI not set, exit."
   exit 1
 fi
 echo "src dir: $PWD"
