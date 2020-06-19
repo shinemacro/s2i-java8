@@ -7,17 +7,17 @@
    "spec": {
       "tags": [
          {
-            "name": "latest",
+            "name": "v1",
             "annotations": {
                "description": "Java8 S2I image",
                "iconClass": "icon-jboss",
                "tags": "java,java8,maven,gradle",
                "supports": "java:8",
-               "version": "latest"
+               "version": "v1"
             },
             "from": {
                "kind": "DockerImage",
-               "name": "docker.io/zhaoyaohong/s2i-java8:latest"
+               "name": "registry.ocp.epay/s2i/s2i-java8:v1"
             }
          },
          {
@@ -31,7 +31,7 @@
             },
             "from": {
                "kind": "DockerImage",
-               "name": "docker.io/zhaoyaohong/s2i-java8:v2"
+               "name": "registry.ocp.epay/s2i/s2i-java8:v2"
             }
          }
       ]

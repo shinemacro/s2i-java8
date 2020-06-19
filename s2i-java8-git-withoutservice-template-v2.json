@@ -197,22 +197,7 @@
                                         "name": "GIT_TAG",
                                         "value": "${GIT_TAG}"
                                     }
-                                ],
-                                "volumeMounts": [
-                                    {
-                                        "mountPath": "/opt/app-root/logs",
-                                        "name": "log-storage"
-                                    }
                                 ]
-                            }
-                        ],
-                        "volumes": [
-                            {
-                                "hostPath": {
-                                    "path": "/var/openshift-logs/applogs",
-                                    "type": "DirectoryOrCreate"
-                                },
-                                "name": "log-storage"
                             }
                         ]
                     }
